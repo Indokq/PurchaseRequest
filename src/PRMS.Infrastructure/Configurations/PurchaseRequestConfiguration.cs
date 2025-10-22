@@ -136,9 +136,66 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         
         builder.HasMany(u => u.Roles)
             .WithMany(r => r.Users)
-            .UsingEntity(j => j.ToTable("UserRoles"));
+            .UsingEntity(j => 
+            {
+                j.ToTable("UserRoles");
+                j.Property<Guid>("UserId");
+                j.Property<Guid>("RoleId");
+                j.HasKey("UserId", "RoleId");
+            });
+        
+        builder.Property(u => u.RowVersion)
+            .IsRowVersion();
         
         builder.Ignore(u => u.FullName);
+    }
+}
+
+public class DepartmentConfiguration : IEntityTypeConfiguration<Department>
+{
+    public void Configure(EntityTypeBuilder<Department> builder)
+    {
+        builder.ToTable("Departments");
+        
+        builder.HasKey(d => d.Id);
+        
+        builder.HasOne(d => d.Manager)
+            .WithMany()
+            .HasForeignKey(d => d.ManagerId)
+            .OnDelete(DeleteBehavior.Restrict);
+        
+        builder.HasOne(d => d.ParentDepartment)
+            .WithMany()
+            .HasForeignKey(d => d.ParentDepartmentId)
+            .OnDelete(DeleteBehavior.Restrict);
+        
+        builder.Property(d => d.RowVersion)
+            .IsRowVersion();
+    }
+}
+
+public class ApprovalConfiguration : IEntityTypeConfiguration<Approval>
+{
+    public void Configure(EntityTypeBuilder<Approval> builder)
+    {
+        builder.ToTable("Approvals");
+        
+        builder.HasKey(a => a.Id);
+        
+        builder.HasOne(a => a.Approver)
+            .WithMany(u => u.Approvals)
+            .HasForeignKey(a => a.ApproverId)
+            .OnDelete(DeleteBehavior.Restrict);
+        
+        builder.HasOne(a => a.DelegatedTo)
+            .WithMany()
+            .HasForeignKey(a => a.DelegatedToId)
+            .OnDelete(DeleteBehavior.Restrict);
+        
+        builder.Property(a => a.RowVersion)
+            .IsRowVersion();
+        
+        builder.Ignore(a => a.IsOverdue);
     }
 }
 
@@ -170,5 +227,8 @@ public class VendorConfiguration : IEntityTypeConfiguration<Vendor>
         
         builder.Property(v => v.CreditLimit)
             .HasPrecision(18, 2);
+        
+        builder.Property(v => v.RowVersion)
+            .IsRowVersion();
     }
 }

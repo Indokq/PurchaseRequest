@@ -138,6 +138,7 @@ public class PurchaseRequestController : ControllerBase
     }
 
     [HttpPost("{id}/approve")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult> ApprovePurchaseRequest(Guid id, [FromBody] string? comments)
     {
         try
@@ -164,6 +165,7 @@ public class PurchaseRequestController : ControllerBase
     }
 
     [HttpPost("{id}/reject")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult> RejectPurchaseRequest(Guid id, [FromBody] string reason)
     {
         try
@@ -190,6 +192,7 @@ public class PurchaseRequestController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult> DeletePurchaseRequest(Guid id)
     {
         try

@@ -13,13 +13,15 @@ public interface IRepository<T> where T : class
     Task DeleteAsync(T entity, CancellationToken cancellationToken = default);
     Task<int> CountAsync(Expression<Func<T, bool>>? predicate = null, CancellationToken cancellationToken = default);
     Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default);
+    Task<T?> GetByIdWithIncludesAsync(Guid id, string[] includes, CancellationToken cancellationToken = default);
+    Task<T?> FindOneWithIncludesAsync(Expression<Func<T, bool>> predicate, string[] includes, CancellationToken cancellationToken = default);
 }
 
 public interface IUnitOfWork : IDisposable
 {
     IRepository<T> Repository<T>() where T : class;
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
-    Task BeginTransactionAsync();
+    Task BeginTransactionAsync();   
     Task CommitTransactionAsync();
     Task RollbackTransactionAsync();
 }

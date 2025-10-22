@@ -53,6 +53,7 @@ public class VendorController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<Vendor>> CreateVendor([FromBody] Vendor vendor)
     {
         try
@@ -70,6 +71,7 @@ public class VendorController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult> UpdateVendor(Guid id, [FromBody] Vendor vendor)
     {
         try
@@ -90,6 +92,7 @@ public class VendorController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult> DeleteVendor(Guid id)
     {
         try

@@ -25,6 +25,15 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
+// Authentication Services
+builder.Services.AddScoped<PRMS.Domain.Interfaces.IJwtTokenService, PRMS.Infrastructure.Services.JwtTokenService>();
+builder.Services.AddSingleton<PRMS.Domain.Interfaces.IPasswordHasher, PRMS.Infrastructure.Services.PasswordHasher>();
+builder.Services.AddScoped<PRMS.Domain.Interfaces.ICurrentUserService, PRMS.Infrastructure.Services.CurrentUserService>();
+builder.Services.AddHttpContextAccessor();
+
+// Database Initializer
+builder.Services.AddScoped<PRMS.Infrastructure.Data.DbInitializer>();
+
 builder.Services.AddMediatR(cfg => {
     cfg.RegisterServicesFromAssembly(typeof(PRMS.Application.Commands.CreatePurchaseRequestCommand).Assembly);
 });
@@ -44,7 +53,17 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminOnly", policy => 
+        policy.RequireRole("Admin"));
+    
+    options.AddPolicy("AuthenticatedUser", policy => 
+        policy.RequireAuthenticatedUser());
+    
+    options.AddPolicy("EmployeeOrAdmin", policy => 
+        policy.RequireRole("Admin", "Employee"));
+});
 
 builder.Services.AddSignalR();
 
@@ -124,5 +143,21 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.MapHub<PRMS.API.Hubs.NotificationHub>("/hubs/notification");
+
+// Initialize database with roles and admin user
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var dbInitializer = services.GetRequiredService<PRMS.Infrastructure.Data.DbInitializer>();
+        await dbInitializer.InitializeAsync();
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred while initializing the database");
+    }
+}
 
 app.Run();
