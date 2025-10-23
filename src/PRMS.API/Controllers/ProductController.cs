@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PRMS.Domain.Entities;
+using PRMS.Domain.Enums;
 using PRMS.Domain.Interfaces;
+using PRMS.Shared.DTOs;
 
 namespace PRMS.API.Controllers;
 
@@ -11,16 +13,21 @@ namespace PRMS.API.Controllers;
 public class ProductController : ControllerBase
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly ICurrentUserService _currentUserService;
     private readonly ILogger<ProductController> _logger;
 
-    public ProductController(IUnitOfWork unitOfWork, ILogger<ProductController> logger)
+    public ProductController(
+        IUnitOfWork unitOfWork, 
+        ICurrentUserService currentUserService,
+        ILogger<ProductController> logger)
     {
         _unitOfWork = unitOfWork;
+        _currentUserService = currentUserService;
         _logger = logger;
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Product>>> GetProducts([FromQuery] string? category)
+    public async Task<ActionResult<IEnumerable<ProductResponseDto>>> GetProducts([FromQuery] string? category)
     {
         try
         {
@@ -31,7 +38,32 @@ public class ProductController : ControllerBase
                 products = products.Where(p => p.Category.ToString() == category);
             }
 
-            return Ok(products);
+            var response = products.Select(p => new ProductResponseDto(
+                p.Id,
+                p.ProductCode,
+                p.Name,
+                p.Description,
+                p.Category.ToString(),
+                p.SubCategory,
+                p.PartNumber,
+                p.Manufacturer,
+                p.Brand,
+                p.Unit,
+                p.StandardPrice,
+                p.MinOrderQuantity,
+                p.MaxOrderQuantity,
+                p.LeadTimeDays,
+                p.IsActive,
+                p.RequiresApproval,
+                p.ImageUrl,
+                p.Specification,
+                p.CreatedAt,
+                p.CreatedBy,
+                p.UpdatedAt,
+                p.UpdatedBy
+            ));
+
+            return Ok(response);
         }
         catch (Exception ex)
         {
@@ -41,7 +73,7 @@ public class ProductController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<Product>> GetProduct(Guid id)
+    public async Task<ActionResult<ProductResponseDto>> GetProduct(Guid id)
     {
         try
         {
@@ -49,7 +81,32 @@ public class ProductController : ControllerBase
             if (product == null)
                 return NotFound();
 
-            return Ok(product);
+            var response = new ProductResponseDto(
+                product.Id,
+                product.ProductCode,
+                product.Name,
+                product.Description,
+                product.Category.ToString(),
+                product.SubCategory,
+                product.PartNumber,
+                product.Manufacturer,
+                product.Brand,
+                product.Unit,
+                product.StandardPrice,
+                product.MinOrderQuantity,
+                product.MaxOrderQuantity,
+                product.LeadTimeDays,
+                product.IsActive,
+                product.RequiresApproval,
+                product.ImageUrl,
+                product.Specification,
+                product.CreatedAt,
+                product.CreatedBy,
+                product.UpdatedAt,
+                product.UpdatedBy
+            );
+
+            return Ok(response);
         }
         catch (Exception ex)
         {
@@ -77,14 +134,63 @@ public class ProductController : ControllerBase
 
     [HttpPost]
     [Authorize(Roles = "Admin")]
-    public async Task<ActionResult<Product>> CreateProduct([FromBody] Product product)
+    public async Task<ActionResult<ProductResponseDto>> CreateProduct([FromBody] CreateProductDto dto)
     {
         try
         {
+            if (!Enum.TryParse<ProductCategory>(dto.Category, out var category))
+                return BadRequest("Invalid product category");
+
+            var product = new Product
+            {
+                ProductCode = dto.ProductCode,
+                Name = dto.Name,
+                Description = dto.Description,
+                Category = category,
+                SubCategory = dto.SubCategory,
+                PartNumber = dto.PartNumber,
+                Manufacturer = dto.Manufacturer,
+                Brand = dto.Brand,
+                Unit = dto.Unit,
+                StandardPrice = dto.StandardPrice,
+                MinOrderQuantity = dto.MinOrderQuantity,
+                MaxOrderQuantity = dto.MaxOrderQuantity,
+                LeadTimeDays = dto.LeadTimeDays,
+                IsActive = dto.IsActive,
+                RequiresApproval = dto.RequiresApproval,
+                ImageUrl = dto.ImageUrl,
+                Specification = dto.Specification
+            };
+
             await _unitOfWork.Repository<Product>().AddAsync(product);
             await _unitOfWork.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, product);
+            var response = new ProductResponseDto(
+                product.Id,
+                product.ProductCode,
+                product.Name,
+                product.Description,
+                product.Category.ToString(),
+                product.SubCategory,
+                product.PartNumber,
+                product.Manufacturer,
+                product.Brand,
+                product.Unit,
+                product.StandardPrice,
+                product.MinOrderQuantity,
+                product.MaxOrderQuantity,
+                product.LeadTimeDays,
+                product.IsActive,
+                product.RequiresApproval,
+                product.ImageUrl,
+                product.Specification,
+                product.CreatedAt,
+                product.CreatedBy,
+                product.UpdatedAt,
+                product.UpdatedBy
+            );
+
+            return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, response);
         }
         catch (Exception ex)
         {
@@ -95,17 +201,67 @@ public class ProductController : ControllerBase
 
     [HttpPut("{id}")]
     [Authorize(Roles = "Admin")]
-    public async Task<ActionResult> UpdateProduct(Guid id, [FromBody] Product product)
+    public async Task<ActionResult<ProductResponseDto>> UpdateProduct(Guid id, [FromBody] UpdateProductDto dto)
     {
         try
         {
-            if (id != product.Id)
+            if (id != dto.Id)
                 return BadRequest("ID mismatch");
+
+            var product = await _unitOfWork.Repository<Product>().GetByIdAsync(id);
+            if (product == null)
+                return NotFound();
+
+            if (!Enum.TryParse<ProductCategory>(dto.Category, out var category))
+                return BadRequest("Invalid product category");
+
+            product.ProductCode = dto.ProductCode;
+            product.Name = dto.Name;
+            product.Description = dto.Description;
+            product.Category = category;
+            product.SubCategory = dto.SubCategory;
+            product.PartNumber = dto.PartNumber;
+            product.Manufacturer = dto.Manufacturer;
+            product.Brand = dto.Brand;
+            product.Unit = dto.Unit;
+            product.StandardPrice = dto.StandardPrice;
+            product.MinOrderQuantity = dto.MinOrderQuantity;
+            product.MaxOrderQuantity = dto.MaxOrderQuantity;
+            product.LeadTimeDays = dto.LeadTimeDays;
+            product.IsActive = dto.IsActive;
+            product.RequiresApproval = dto.RequiresApproval;
+            product.ImageUrl = dto.ImageUrl;
+            product.Specification = dto.Specification;
 
             await _unitOfWork.Repository<Product>().UpdateAsync(product);
             await _unitOfWork.SaveChangesAsync();
 
-            return NoContent();
+            var response = new ProductResponseDto(
+                product.Id,
+                product.ProductCode,
+                product.Name,
+                product.Description,
+                product.Category.ToString(),
+                product.SubCategory,
+                product.PartNumber,
+                product.Manufacturer,
+                product.Brand,
+                product.Unit,
+                product.StandardPrice,
+                product.MinOrderQuantity,
+                product.MaxOrderQuantity,
+                product.LeadTimeDays,
+                product.IsActive,
+                product.RequiresApproval,
+                product.ImageUrl,
+                product.Specification,
+                product.CreatedAt,
+                product.CreatedBy,
+                product.UpdatedAt,
+                product.UpdatedBy
+            );
+
+            return Ok(response);
         }
         catch (Exception ex)
         {
