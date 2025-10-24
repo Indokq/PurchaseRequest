@@ -1,7 +1,7 @@
 // Authentication types
 
 export interface LoginRequest {
-  username: string;
+  email: string;
   password: string;
 }
 
@@ -15,10 +15,13 @@ export interface LoginResponse {
 }
 
 export interface RegisterRequest {
-  username: string;
   email: string;
   password: string;
-  fullName: string;
+  firstName: string;
+  lastName: string;
+  employeeId: string;
+  departmentId: string;
+  role?: string;
 }
 
 export interface AuthUser {

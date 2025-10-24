@@ -8,10 +8,12 @@ export const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
   const [formData, setFormData] = useState({
-    username: '',
     email: '',
     password: '',
-    fullName: '',
+    firstName: '',
+    lastName: '',
+    employeeId: '',
+    departmentId: '',
   });
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -49,32 +51,62 @@ export const RegisterPage: React.FC = () => {
             )}
 
             <div>
-              <label htmlFor="fullName" className="block text-sm font-medium text-slate-300 mb-2">
-                Full Name
+              <label htmlFor="firstName" className="block text-sm font-medium text-slate-300 mb-2">
+                First Name
               </label>
               <Input
-                id="fullName"
+                id="firstName"
                 type="text"
-                value={formData.fullName}
-                onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                value={formData.firstName}
+                onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
                 required
                 className="w-full"
-                placeholder="Enter your full name"
+                placeholder="Enter your first name"
               />
             </div>
 
             <div>
-              <label htmlFor="username" className="block text-sm font-medium text-slate-300 mb-2">
-                Username
+              <label htmlFor="lastName" className="block text-sm font-medium text-slate-300 mb-2">
+                Last Name
               </label>
               <Input
-                id="username"
+                id="lastName"
                 type="text"
-                value={formData.username}
-                onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                value={formData.lastName}
+                onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
                 required
                 className="w-full"
-                placeholder="Choose a username"
+                placeholder="Enter your last name"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="employeeId" className="block text-sm font-medium text-slate-300 mb-2">
+                Employee ID
+              </label>
+              <Input
+                id="employeeId"
+                type="text"
+                value={formData.employeeId}
+                onChange={(e) => setFormData({ ...formData, employeeId: e.target.value })}
+                required
+                className="w-full"
+                placeholder="Enter your employee ID"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="departmentId" className="block text-sm font-medium text-slate-300 mb-2">
+                Department ID
+              </label>
+              <Input
+                id="departmentId"
+                type="text"
+                value={formData.departmentId}
+                onChange={(e) => setFormData({ ...formData, departmentId: e.target.value })}
+                required
+                className="w-full"
+                placeholder="Enter your department ID"
               />
             </div>
 

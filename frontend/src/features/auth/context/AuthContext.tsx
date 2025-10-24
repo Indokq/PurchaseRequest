@@ -3,7 +3,6 @@ import { clearAuth, getStoredToken, storeAuth } from '../../../services/api/clie
 
 interface User {
   id: string;
-  username: string;
   email: string;
   fullName: string;
   roles: string[];
@@ -31,7 +30,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // For now, just mark as authenticated
       setUser({
         id: '1',
-        username: 'user',
         email: 'user@example.com',
         fullName: 'Current User',
         roles: ['User'],
@@ -44,7 +42,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     storeAuth(authData);
     setUser({
       id: authData.userId || '1',
-      username: authData.username || 'user',
       email: authData.email || 'user@example.com',
       fullName: authData.fullName || 'Current User',
       roles: authData.roles || ['User'],
