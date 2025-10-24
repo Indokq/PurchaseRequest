@@ -10,6 +10,8 @@ export type ProductCategory =
   | 'Other';
 
 export interface ProductResponse extends BaseEntity {
+  sku?: string;
+  unitPrice?: number;
   productCode: string;
   name: string;
   description?: string;

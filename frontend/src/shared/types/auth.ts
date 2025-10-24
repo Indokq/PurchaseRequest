@@ -1,7 +1,7 @@
 // Authentication types
 
 export interface LoginRequest {
-  email: string;
+  username: string;
   password: string;
 }
 
@@ -15,16 +15,13 @@ export interface LoginResponse {
 }
 
 export interface RegisterRequest {
+  username: string;
   email: string;
   password: string;
-  firstName: string;
-  lastName: string;
-  employeeId: string;
-  departmentId: string;
-  role: string;
+  fullName: string;
 }
 
-export interface User {
+export interface AuthUser {
   id: string;
   email: string;
   firstName: string;
@@ -37,7 +34,7 @@ export interface User {
 }
 
 export interface AuthState {
-  user: User | null;
+  user: AuthUser | null;
   token: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;

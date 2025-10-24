@@ -1,6 +1,7 @@
 export interface UserDto {
   id: string;
   email: string;
+  username?: string;
   firstName: string;
   lastName: string;
   fullName: string;
@@ -11,6 +12,8 @@ export interface UserDto {
   isActive: boolean;
   createdAt: string;
 }
+
+export type User = UserDto;
 
 export interface RoleDto {
   id: string;

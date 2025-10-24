@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, Search, Filter } from 'lucide-react';
 import { usePurchaseRequests } from '../hooks/usePurchaseRequests';
-import { Badge, Button, Card, Spinner } from '../../../shared/components';
+import { Button, Card, Spinner } from '../../../shared/components';
+import { StatusBadge } from './StatusBadge';
 import type { PurchaseRequestFilters, PurchaseRequestStatus } from '../../../shared/types';
 import { format } from 'date-fns';
 
@@ -157,7 +158,7 @@ export function PurchaseRequestListPage() {
                       {pr.departmentName}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <Badge status={pr.status} />
+                      <StatusBadge status={pr.status} />
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       ${pr.totalAmount.toLocaleString()}

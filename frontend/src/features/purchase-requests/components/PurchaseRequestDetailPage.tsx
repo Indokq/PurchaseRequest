@@ -1,7 +1,8 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Edit, CheckCircle, XCircle, Send } from 'lucide-react';
 import { usePurchaseRequest, useSubmitPurchaseRequest } from '../hooks/usePurchaseRequests';
-import { Badge, Button, Card, Spinner } from '../../../shared/components';
+import { Button, Card, Spinner } from '../../../shared/components';
+import { StatusBadge } from './StatusBadge';
 import { format } from 'date-fns';
 import { useState } from 'react';
 import { ApproveRejectModal } from './ApproveRejectModal';
@@ -106,7 +107,7 @@ export function PurchaseRequestDetailPage() {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <p className="text-sm text-gray-500">Status</p>
-                <Badge status={pr.status} className="mt-1" />
+                <StatusBadge status={pr.status} className="mt-1" />
               </div>
               <div>
                 <p className="text-sm text-gray-500">Total Amount</p>
@@ -216,7 +217,7 @@ export function PurchaseRequestDetailPage() {
                       <p className="text-sm font-medium text-gray-900">
                         Level {approval.approvalLevel}
                       </p>
-                      <Badge status={approval.status} />
+                      <StatusBadge status={approval.status} />
                     </div>
                     <p className="text-xs text-gray-500 mt-1">{approval.approverName}</p>
                     {approval.comments && (
