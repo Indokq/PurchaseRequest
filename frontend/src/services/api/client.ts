@@ -2,7 +2,7 @@ import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from 'ax
 import type { ApiError } from '../../shared/types';
 
 // Get API base URL from environment or use default
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://localhost:5001/api';
+const API_BASE_URL = (import.meta as any).env?.VITE_API_BASE_URL || 'https://localhost:5001/api';
 
 // Create axios instance with default config
 export const apiClient = axios.create({
@@ -56,7 +56,7 @@ apiClient.interceptors.request.use(
     }
     
     // Log requests in development
-    if (import.meta.env.DEV) {
+    if ((import.meta as any).env?.DEV) {
       console.log(`[API Request] ${config.method?.toUpperCase()} ${config.url}`, config.data || config.params);
     }
     
@@ -71,7 +71,7 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response: AxiosResponse) => {
     // Log responses in development
-    if (import.meta.env.DEV) {
+    if ((import.meta as any).env?.DEV) {
       console.log(`[API Response] ${response.config.method?.toUpperCase()} ${response.config.url}`, response.data);
     }
     
@@ -79,7 +79,7 @@ apiClient.interceptors.response.use(
   },
   (error: AxiosError) => {
     // Log errors in development
-    if (import.meta.env.DEV) {
+    if ((import.meta as any).env?.DEV) {
       console.error('[API Error]', error.response?.status, error.response?.data || error.message);
     }
     
@@ -95,9 +95,9 @@ apiClient.interceptors.response.use(
     
     // Transform error to ApiError format
     const apiError: ApiError = {
-      message: error.response?.data?.message || error.message || 'An unexpected error occurred',
+      message: (error.response?.data as any)?.message || error.message || 'An unexpected error occurred',
       statusCode: error.response?.status || 500,
-      errors: error.response?.data?.errors,
+      errors: (error.response?.data as any)?.errors,
     };
     
     return Promise.reject(apiError);

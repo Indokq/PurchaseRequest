@@ -101,8 +101,8 @@ export function useApprovePurchaseRequest() {
 
       return { previousPR };
     },
-    onError: (err, variables, context) => {
-      // Rollback on error
+    onError: (_err, variables, context) => {
+      // Rollback optimistic update if mutation fails
       if (context?.previousPR) {
         queryClient.setQueryData(
           queryKeys.purchaseRequests.detail(variables.id),

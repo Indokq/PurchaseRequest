@@ -17,7 +17,7 @@ export const queryClient = new QueryClient({
       retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
       
       // Refetch on window focus in production
-      refetchOnWindowFocus: !import.meta.env.DEV,
+      refetchOnWindowFocus: !(import.meta as any).env?.DEV,
       
       // Refetch on reconnect
       refetchOnReconnect: true,
