@@ -57,8 +57,6 @@ public class CreatePurchaseRequestDto
     public int Urgency { get; set; }
     public DateTime? RequiredByDate { get; set; }
     public Guid DepartmentId { get; set; }
-    public Guid? BudgetId { get; set; }
-    public Guid? ProjectId { get; set; }
     public List<CreatePurchaseRequestItemDto> Items { get; set; } = new();
 }
 

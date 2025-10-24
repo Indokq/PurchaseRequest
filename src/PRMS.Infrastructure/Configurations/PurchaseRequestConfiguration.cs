@@ -49,16 +49,6 @@ public class PurchaseRequestConfiguration : IEntityTypeConfiguration<PurchaseReq
             .HasForeignKey(pr => pr.DepartmentId)
             .OnDelete(DeleteBehavior.Restrict);
         
-        builder.HasOne(pr => pr.Budget)
-            .WithMany(b => b.PurchaseRequests)
-            .HasForeignKey(pr => pr.BudgetId)
-            .OnDelete(DeleteBehavior.SetNull);
-        
-        builder.HasOne(pr => pr.Project)
-            .WithMany(p => p.PurchaseRequests)
-            .HasForeignKey(pr => pr.ProjectId)
-            .OnDelete(DeleteBehavior.SetNull);
-        
         builder.HasOne(pr => pr.PurchaseOrder)
             .WithOne(po => po.PurchaseRequest)
             .HasForeignKey<PurchaseRequest>(pr => pr.PurchaseOrderId)

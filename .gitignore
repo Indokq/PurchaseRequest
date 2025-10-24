@@ -731,6 +731,6 @@ uploads/
 docs
 QUICKSTART.md
 PROJECT_SUMMARY.md
-openspec
+## openspec
 .factory
 AGENTS.md

@@ -25,12 +25,6 @@ public class PurchaseRequest : BaseEntity
     public decimal TotalAmount { get; set; }
     public string Currency { get; set; } = "USD";
     
-    public Guid? BudgetId { get; set; }
-    public virtual Budget? Budget { get; set; }
-    
-    public Guid? ProjectId { get; set; }
-    public virtual Project? Project { get; set; }
-    
     public string? ApprovalWorkflowId { get; set; }
     public int CurrentApprovalLevel { get; set; }
     

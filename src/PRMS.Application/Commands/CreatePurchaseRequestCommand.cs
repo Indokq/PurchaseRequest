@@ -33,8 +33,6 @@ public class CreatePurchaseRequestCommandHandler : IRequestHandler<CreatePurchas
             Status = PRMS.Domain.Enums.PurchaseRequestStatus.Draft,
             RequestDate = DateTime.UtcNow,
             RequiredByDate = request.PurchaseRequest.RequiredByDate,
-            BudgetId = request.PurchaseRequest.BudgetId,
-            ProjectId = request.PurchaseRequest.ProjectId,
             Currency = "USD"
         };
 
